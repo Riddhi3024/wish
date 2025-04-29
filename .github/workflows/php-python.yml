@@ -6,33 +6,48 @@ on:
 jobs:
   run-php-python:
     runs-on: ubuntu-latest
+
     steps:
+    # Checkout the repository to get the latest code
     - name: Checkout code
       uses: actions/checkout@v3
-
+    
+    # Set up PHP (using PHP 8.1)
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
         php-version: '8.1'
-
-    - name: Run PHP files
+    
+    # Install PHP dependencies (if any, using composer)
+    - name: Install PHP dependencies
+      run: |
+        if [ -f composer.json ]; then composer install; fi
+    
+    # Run PHP files
+    - name: Run PHP scripts
       run: |
         php index.php
-        php upload.php
-        php process.php
-        php result.php
-
+        php db.php
+        php imgform.php
+        php s.php
+        php sv.php
+    
+    # Set up Python (using Python 3.10)
     - name: Setup Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.10'
 
+    # Install Python dependencies (from requirements.txt)
     - name: Install Python dependencies
       run: |
-        pip install -r requirements.txt || true
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-    - name: Run Python analysis
-      run: python analyze.py uploads/image.jpg
-
+    # Run Python image comparison analysis (using compare.py)
+    - name: Run Python image comparison
+      run: |
+        python compare.py uploads/matched_output.jpg uploads/no_match_found.jpg
+    
+    # List contents of uploads folder for debugging
     - name: 📁 List Uploads Folder
       run: ls -l uploads/
