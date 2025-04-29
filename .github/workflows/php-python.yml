@@ -1,7 +1,7 @@
 name: Run PHP and Python Scripts
 
 on:
-  workflow_dispatch:  # Manual trigger
+  workflow_dispatch:
 
 jobs:
   run-php-python:
@@ -42,30 +42,23 @@ jobs:
     - name: Wait for MySQL to be ready
       run: |
         until mysqladmin ping -h 127.0.0.1 -uroot -prootpassword --silent; do
-          echo "Waiting for MySQL to be ready..."
+          echo "Waiting for MySQL..."
           sleep 5
         done
 
     - name: Test MySQL connection
-      run: |
-        mysql -h 127.0.0.1 -uroot -prootpassword -e "SHOW DATABASES;"
+      run: mysql -h 127.0.0.1 -uroot -prootpassword -e "SHOW DATABASES;"
 
-    - name: Update DB config file to connect to CI MySQL
-      run: |
-        sed -i 's/localhost/127.0.0.1/g' db.php
-
-    - name: Wait for MySQL to be ready
-      run: |
-        mysqladmin ping -h 127.0.0.1 -uroot -prootpassword --silent; do
-        echo "Waiting for MySQL..."
-      sleep 5
-    done
+    # Optional: Import SQL if you have a file like `schema.sql`
+    # - name: Import database schema
+    #   run: |
+    #     mysql -h 127.0.0.1 -uroot -prootpassword familytree < schema.sql
 
     - name: Run PHP scripts
       run: |
         php index.php
-        php db.php
         php s.php
+        php db.php
         php sv.php
 
     - name: Setup Python
