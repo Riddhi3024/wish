@@ -12,24 +12,27 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
     
+    # List all files in the repository to check the file structure
+    - name: List all files in the repository
+      run: ls -R
+    
     # Set up PHP (using PHP 8.1)
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
         php-version: '8.1'
     
-    # Install PHP dependencies (if any, using composer)
-    - name: Install PHP dependencies
-      run: |
-        if [ -f composer.json ]; then composer install; fi
-    
-    # Run PHP files
+    # Check PHP version to ensure it's installed properly
+    - name: Check PHP version
+      run: php -v
+
+    # Run PHP files (adjust path if needed)
     - name: Run PHP scripts
       run: |
         php index.php
         php db.php
-        php s.php
         php sv.php
+        php s.php
     
     # Set up Python (using Python 3.10)
     - name: Setup Python
@@ -48,5 +51,5 @@ jobs:
         python compare.py uploads/matched_output.jpg uploads/no_match_found.jpg
     
     # List contents of uploads folder for debugging
-    - name: 📁 List Uploads Folder
+    - name: List Uploads folder contents
       run: ls -l uploads/
