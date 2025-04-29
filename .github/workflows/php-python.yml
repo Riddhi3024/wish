@@ -12,9 +12,9 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
     
-    # List all files in the repository to check the file structure
-    - name: List all files in the repository
-      run: ls -R
+    # Verify that PHP files are present in the root directory
+    - name: List repository contents (root directory)
+      run: ls -l
     
     # Set up PHP (using PHP 8.1)
     - name: Setup PHP
@@ -26,7 +26,13 @@ jobs:
     - name: Check PHP version
       run: php -v
 
-    # Run PHP files (adjust path if needed)
+    # Ensure all files have appropriate permissions to be executed
+    - name: Check file permissions
+      run: |
+        chmod +x index.php upload.php process.php result.php
+        ls -l
+
+    # Run PHP files (no need to change directory as files are in root)
     - name: Run PHP scripts
       run: |
         php index.php
