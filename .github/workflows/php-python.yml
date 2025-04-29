@@ -49,8 +49,8 @@ jobs:
     - name: Test MySQL connection
       run: mysql -h 127.0.0.1 -uroot -prootpassword -e "SHOW DATABASES;"
 
-    # Optional: Import SQL if you have a file like `schema.sql`
-    # - name: Import database schema
+    # Optional: Import database schema if you have it
+    # - name: Import SQL schema
     #   run: |
     #     mysql -h 127.0.0.1 -uroot -prootpassword familytree < schema.sql
 
