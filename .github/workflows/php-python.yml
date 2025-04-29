@@ -28,7 +28,6 @@ jobs:
       run: |
         php index.php
         php db.php
-        php imgform.php
         php s.php
         php sv.php
     
