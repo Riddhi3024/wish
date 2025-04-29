@@ -22,54 +22,56 @@ jobs:
           --health-retries=3
 
     steps:
-    # Checkout the repository to get the latest code
     - name: Checkout code
       uses: actions/checkout@v3
-    
-    # Verify that PHP files are present in the root directory
-    - name: List repository contents (root directory)
+
+    - name: List repository contents
       run: ls -l
-    
-    # Set up PHP (using PHP 8.1)
+
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
         php-version: '8.1'
-    
-    # Check PHP version to ensure it's installed properly
+
     - name: Check PHP version
       run: php -v
 
-    # Ensure all files have appropriate permissions to be executed
-    - name: Check file permissions
-      run: |
-        chmod +x index.php upload.php process.php result.php
-        ls -l
+    - name: Set up MySQL client
+      run: sudo apt-get install -y default-mysql-client
 
-    # Run PHP files (no need to change directory as files are in root)
+    - name: Wait for MySQL to be ready
+      run: |
+        until mysqladmin ping -h 127.0.0.1 -uroot -prootpassword --silent; do
+          echo "Waiting for MySQL to be ready..."
+          sleep 5
+        done
+
+    - name: Test MySQL connection
+      run: |
+        mysql -h 127.0.0.1 -uroot -prootpassword -e "SHOW DATABASES;"
+
+    - name: Update DB config file to connect to CI MySQL
+      run: |
+        sed -i 's/localhost/127.0.0.1/g' db.php
+
     - name: Run PHP scripts
       run: |
-        php index.php
         php db.php
         php s.php
         php sv.php
-    
-    # Set up Python (using Python 3.10)
+
     - name: Setup Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.10'
 
-    # Install Python dependencies (from requirements.txt)
     - name: Install Python dependencies
       run: |
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-    # Run Python image comparison analysis (using compare.py)
     - name: Run Python image comparison
       run: |
         python compare.py uploads/matched_output.jpg uploads/no_match_found.jpg
-    
-    # List contents of uploads folder for debugging
+
     - name: List Uploads folder contents
       run: ls -l uploads/
