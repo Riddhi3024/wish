@@ -1,0 +1,38 @@
+name: Run PHP and Python Scripts
+
+on:
+  workflow_dispatch:  # Manual trigger
+
+jobs:
+  run-php-python:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'
+
+    - name: Run PHP files
+      run: |
+        php index.php
+        php upload.php
+        php process.php
+        php result.php
+
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install Python dependencies
+      run: |
+        pip install -r requirements.txt || true
+
+    - name: Run Python analysis
+      run: python analyze.py uploads/image.jpg
+
+    - name: 📁 List Uploads Folder
+      run: ls -l uploads/
