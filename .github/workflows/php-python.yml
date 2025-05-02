@@ -1,7 +1,7 @@
 name: Run PHP and Python Scripts
 
 on:
-  workflow_dispatch:  # Trigger workflow manually
+  workflow_dispatch:  # Manually trigger the workflow
 
 jobs:
   run-php-python:
