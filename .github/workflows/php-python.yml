@@ -1,6 +1,8 @@
+name: Run PHP and Python Scripts
+
 on:
   workflow_dispatch:
-
+  
 jobs:
   run-php-python:
     runs-on: ubuntu-latest
