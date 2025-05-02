@@ -2,7 +2,7 @@ name: Run PHP and Python Scripts
 
 on:
   workflow_dispatch:
-  
+
 jobs:
   run-php-python:
     runs-on: ubuntu-latest
@@ -22,62 +22,56 @@ jobs:
           --health-retries=3
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: List repository contents
-      run: ls -l
+      - name: List repository contents
+        run: ls -l
 
-    - name: Setup PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: '8.1'
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
 
-    - name: Check PHP version
-      run: php -v
+      - name: Check PHP version
+        run: php -v
 
-    - name: Set up MySQL client
-      run: sudo apt-get install -y default-mysql-client
+      - name: Set up MySQL client
+        run: sudo apt-get install -y default-mysql-client
 
-   - name: Wait for MySQL to be ready
-  shell: bash
-  run: |
-    for i in {1..10}; do
-      if mysqladmin ping -h 127.0.0.1 -uroot -prootpassword --silent; then
-        echo "MySQL is ready!"
-        break
-      fi
-      echo "Waiting for MySQL... ($i)"
-      sleep 5
-    done
+      - name: Wait for MySQL to be ready
+        run: |
+          until mysqladmin ping -h 127.0.0.1 -uroot -prootpassword --silent; do
+            echo "Waiting for MySQL..."
+            sleep 5
+          done
 
+      - name: Test MySQL connection
+        run: mysql -h 127.0.0.1 -uroot -prootpassword -e "SHOW DATABASES;"
 
-    - name: Test MySQL connection
-      run: mysql -h 127.0.0.1 -uroot -prootpassword -e "SHOW DATABASES;"
+      # Optional: Import SQL schema
+      # - name: Import SQL schema
+      #   run: |
+      #     mysql -h 127.0.0.1 -uroot -prootpassword familytree < schema.sql
 
-    # Optional: Import database schema if you have it
-    # - name: Import SQL schema
-    #   run: |
-    #     mysql -h 127.0.0.1 -uroot -prootpassword familytree < schema.sql
+      - name: Run PHP scripts
+        run: |
+          php index.php
+          php s.php
+          php sv.php
 
-    - name: Run PHP scripts
-      run: |
-        php index.php
-        php s.php
-        php sv.php
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
 
-    - name: Setup Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
+      - name: Install Python dependencies
+        run: |
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-    - name: Install Python dependencies
-      run: |
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: Run Python image comparison
+        run: |
+          python compare.py uploads/matched_output.jpg uploads/no_match_found.jpg
 
-    - name: Run Python image comparison
-      run: |
-        python compare.py uploads/matched_output.jpg uploads/no_match_found.jpg
-
-    - name: List Uploads folder contents
-      run: ls -l uploads/
+      - name: List Uploads folder contents
+        run: ls -l uploads/
