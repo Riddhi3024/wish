@@ -37,17 +37,18 @@ jobs:
     - name: Set up MySQL client
       run: sudo apt-get install -y default-mysql-client
 
-    - name: Wait for MySQL to be ready
-      shell: bash
-      run: |
-        for i in {1..10}; do
-          if mysqladmin ping -h 127.0.0.1 -uroot -prootpassword --silent; then
-            echo "MySQL is ready!"
-            break
-          fi
-          echo "Waiting for MySQL... ($i)"
-          sleep 5
-        done
+   - name: Wait for MySQL to be ready
+  shell: bash
+  run: |
+    for i in {1..10}; do
+      if mysqladmin ping -h 127.0.0.1 -uroot -prootpassword --silent; then
+        echo "MySQL is ready!"
+        break
+      fi
+      echo "Waiting for MySQL... ($i)"
+      sleep 5
+    done
+
 
     - name: Test MySQL connection
       run: mysql -h 127.0.0.1 -uroot -prootpassword -e "SHOW DATABASES;"
