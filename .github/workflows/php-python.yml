@@ -1,7 +1,7 @@
 name: Run PHP and Python Scripts
 
 on:
-  workflow_dispatch:  # Manually trigger the workflow
+  workflow_dispatch:  # Trigger workflow manually
 
 jobs:
   run-php-python:
@@ -50,11 +50,6 @@ jobs:
 
       - name: Test MySQL connection
         run: mysql -h 127.0.0.1 -uroot -p"" -e "SHOW DATABASES;"
-
-      # Optional: Import database schema if you have it
-      # - name: Import SQL schema
-      #   run: |
-      #     mysql -h 127.0.0.1 -uroot -p"" famillytree < schema.sql
 
       - name: Run PHP scripts
         run: |
