@@ -58,7 +58,7 @@ jobs:
       run: |
         php index.php
         php s.php
-        php db.php
+       
         php sv.php
 
     - name: Setup Python
