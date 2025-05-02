@@ -40,12 +40,16 @@ jobs:
       run:  sudo apt-get update && sudo apt-get install -y default-mysql-client
 
     - name: Wait for MySQL to be ready
-      run: |
-        until mysqladmin ping -h 127.0.0.1 -uroot -prootpassword --silent; do
-          echo "Waiting for MySQL..."
-          sleep 5
-        done
-
+  shell: bash
+  run: |
+    for i in {1..10}; do
+      if mysqladmin ping -h mysql -uroot -prootpassword --silent; then
+        echo "MySQL is ready!"
+        break
+      fi
+      echo "Waiting for MySQL... ($i)"
+      sleep 5
+    done
     - name: Test MySQL connection
       run: mysql -h 127.0.0.1 -uroot -prootpassword -e "SHOW DATABASES;"
 
